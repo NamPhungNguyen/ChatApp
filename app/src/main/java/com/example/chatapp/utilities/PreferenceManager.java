@@ -11,7 +11,7 @@ public class PreferenceManager {
     }
 
     public void putBoolean(String key, Boolean value){
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit(); //dung de chinh sua SharedPreferences
         editor.putBoolean(key, value);
         editor.apply();
     }

@@ -32,10 +32,10 @@ public class SignUpActivity extends AppCompatActivity {
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager = new PreferenceManager(getApplicationContext());
-        setListenners();
+        clickListenners();
     }
 
-    private void setListenners(){
+    private void clickListenners(){
         binding.textSignIn.setOnClickListener(v->onBackPressed());
         binding.btnSignUp.setOnClickListener(v -> {
             if (isValidSignUpDetails()){
@@ -43,7 +43,11 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
         binding.layoutImage.setOnClickListener(v->{
+            //Một Intent mới được tạo với hành động là Intent.ACTION_PICK, điều này yêu cầu hệ thống mở một ứng dụng hoặc một phần tử của hệ thống để chọn một dữ liệu và trả về nó.
+            //Uri MediaStore.Images.Media.EXTERNAL_CONTENT_URI được sử dụng để chỉ định rằng chúng ta muốn chọn một hình ảnh từ bộ nhớ ngoại vi của thiết bị.
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) được sử dụng để thêm cờ FLAG_GRANT_READ_URI_PERMISSION vào Intent.
+            // Điều này là cần thiết khi chúng ta muốn chia sẻ quyền đọc (read permission) cho các ứng dụng khác để có thể đọc Uri của ảnh mà chúng ta chọn.
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             pickImage.launch(intent);
         });
@@ -55,7 +59,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signUp(){
         loading(true);
+        //khoi tao firebasefirestore de thao tác với firestore
         FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+        //tạo hashmap chứa thông tin người dùng
         HashMap<String, Object> user = new HashMap<>();
         user.put(Constants.KEY_NAME, binding.inputNameSignUp.getText().toString());
         user.put(Constants.KEY_EMAIL, binding.inputEmailSignUp.getText().toString());
@@ -69,8 +76,12 @@ public class SignUpActivity extends AppCompatActivity {
                     preferenceManager.putString(Constants.KEY_USER_ID, documentReference.getId());
                     preferenceManager.putString(Constants.KEY_NAME, binding.inputNameSignUp.getText().toString());
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    //các cờ (flags) được thêm vào để đảm bảo rằng khi màn hình mới được mở,
+                    // các màn hình trước đó sẽ bị xóa khỏi ngăn xếp màn hình (stack),
+                    // để người dùng không thể quay lại màn hình đăng ký.
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+
                 })
                 .addOnFailureListener(exception -> {
                     loading(false);
@@ -92,13 +103,16 @@ public class SignUpActivity extends AppCompatActivity {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK){
-                    if (result.getData() != null){
+                    if (result.getData() != null){ // neu thanh cong va khong rong, lay anh tu Uri của ảnh trả về
                         Uri imageUri = result.getData().getData();
                         try {
+                            //Một InputStream được tạo ra từ Uri của ảnh, sau đó sử dụng BitmapFactory để giải mã InputStream thành một Bitmap (ảnh).
                             InputStream inputStream = getContentResolver().openInputStream(imageUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                            //Bitmap này được hiển thị trong ImageView (binding.imageProfile), và TextView (binding.textAddImage) dùng để báo rằng ảnh đã được chọn sẽ được ẩn đi (setVisibility(View.GONE)).
                             binding.imageProfile.setImageBitmap(bitmap);
                             binding.textAddImage.setVisibility(View.GONE);
+                            //ảnh được mã hóa thành một chuỗi base64 bằng cách sử dụng phương thức encodeImage(bitmap), và kết quả được lưu vào biến encodedImage.
                             encodedImage = encodeImage(bitmap);
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
@@ -107,6 +121,8 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
     );
+
+    // validate form sign up
     private Boolean isValidSignUpDetails() {
         if (encodedImage == null){
             showToast("Select profile image");
@@ -134,6 +150,8 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
+
+    // progressBar
     private void loading(Boolean isLoading){
         if (isLoading){
             binding.btnSignUp.setVisibility(View.VISIBLE);
