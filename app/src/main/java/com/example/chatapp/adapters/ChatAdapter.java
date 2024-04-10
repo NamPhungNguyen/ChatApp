@@ -20,7 +20,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String senderId;
     public static final int VIEW_TYPE_SENT = 1;
     public static final int VIEW_TYPE_RECEIVED = 2;
-
     public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId) {
         this.chatMessages = chatMessages;
         this.receiverProfileImage = receiverProfileImage;
@@ -31,16 +30,11 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_SENT){
-            return new SentMessageViewHolder(
-                    ItemContainerSentMessageBinding
-                            .inflate(LayoutInflater.from(parent.getContext()), parent, false)
-            );
+            ItemContainerSentMessageBinding itemContainerSentMessageBinding = ItemContainerSentMessageBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new SentMessageViewHolder(itemContainerSentMessageBinding);
         }else {
-            return new ReceivedMessageViewHolder(
-                    ItemContainerReceivedMessageBinding.inflate(
-                            LayoutInflater.from(parent.getContext()), parent, false
-                    )
-            );
+            ItemContainerReceivedMessageBinding itemContainerReceivedMessageBinding = ItemContainerReceivedMessageBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ReceivedMessageViewHolder(itemContainerReceivedMessageBinding);
         }
     }
 

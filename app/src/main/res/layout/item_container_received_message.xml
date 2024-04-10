@@ -36,7 +36,7 @@
 
     <TextView
         android:id="@+id/textDateTime"
-        android:layout_width="@dimen/_10ssp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:textColor="@color/secondary_text"
