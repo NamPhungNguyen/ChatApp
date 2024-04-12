@@ -73,6 +73,19 @@
         android:background="@color/primary"
         android:layout_marginTop="@dimen/_12sdp"
         app:layout_constraintTop_toBottomOf="@id/imageBack"/>
+
+    <TextView
+        android:id="@+id/textAvailability"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/online"
+        app:layout_constraintTop_toBottomOf="@id/viewSupporter"
+        android:background="#59D65E"
+        android:textSize="@dimen/_10ssp"
+        android:textColor="@color/white"
+        android:padding="@dimen/_2sdp"
+        android:visibility="gone"/>
     
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -86,7 +99,7 @@
         android:padding="@dimen/_20sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="@id/viewBackground"
-        app:layout_constraintTop_toBottomOf="@id/viewSupporter"/>
+        app:layout_constraintTop_toBottomOf="@id/textAvailability"/>
 
     <ProgressBar
         android:layout_width="@dimen/_25sdp"
